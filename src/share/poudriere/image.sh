@@ -238,7 +238,7 @@ while getopts "c:f:h:j:m:n:o:p:P:R:s:S:t:X:z:Z:" FLAG; do
 			;;
 		S)
 			[ -f "${OPTARG}" ] || err 1 "No such pre-export-script: ${OPTARG}"
-			PRE_EXPORT_SCRIPT="${OPTARG}"
+			PRE_EXPORT_SCRIPT=$(realpath ${OPTARG})
 			;;
 		t)
 			MEDIATYPE=${OPTARG}
@@ -504,8 +504,6 @@ convert_package_list() {
 	rm -rf "${PKG_DBDIR}" "${REPOS_DIR}"
 }
 
-# install packages if any is needed
-if [ -n "${PACKAGELIST}" ]; then
 installpackages_localmirror() {
 	mkdir -p ${WRKDIR}/world/tmp/packages
 	${NULLMOUNT} ${POUDRIERE_DATA}/packages/${MASTERNAME} ${WRKDIR}/world/tmp/packages
@@ -552,7 +550,6 @@ installpackages_customrepo() {
 }
 
 # install packages if any is needed
-echo "Reponame: ${PKGREPONAME}"
 if [ -n "${PACKAGELIST}" ]; then
 	if [ -n "${PKGREPONAME}" ]; then
 		installpackages_customrepo
